@@ -1,38 +1,50 @@
-const http = require('http');
-const fs = require('fs');
+const http = require('http')
 
-const server = http.createServer((req, res) => {
-    const url = req.url;
-    const method = req.method;
-    if (url === '/') {
+const server = http.createServer((req,res) => {
+    const {url, method } = req;
+    res.setHeader('Content-Type', 'text/html')
+    if(url === '/'){
         res.write(
             `<html>
-        <head>
-          <title>Enter Message</title>
-        <head>
-        <body>
-          <form action="/message" method="POST">
-            <input type="text" name="message">
-            <button type="submit">Send</button>
-          </form>
-        </body>
-      </html>
-      `
-        );
-        return res.end();
+              <head><title>Yo My Website</title></head>
+              <body>
+              <form action="/message" type="POST">
+                <input type="text" name="message">
+                <button type="submit">Submit Dude</button>
+               </form>
+              </body>
+            </html>
+            `
+        )
+        return res.end()
     }
-    if (url === '/message' && method === 'POST') {
-        fs.writeFileSync('message.txt', 'DUMMY');
-        res.statusCode = 302;
-        res.setHeader('Location', '/');
-        return res.end();
+    if(url === '/message' && method === 'POST'){
+        res.write(
+            `<html>
+              <head><title>Yo My Website</title></head>
+              <body>
+              <div>
+                 <h2>Submitted !!!</h2>
+                 <a href="/">Go Back Dude</a>
+              </div>
+              </body>
+            </html> 
+            `
+        )
+        return res.end()
     }
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<html>');
-    res.write('<head><title>My First Page</title><head>');
-    res.write('<body><h1>Hello from my Node.js Server!</h1></body>');
-    res.write('</html>');
-    res.end();
-});
-
-server.listen(3000);
+    res.write(
+        `<html>
+          <head><title>Yo My Website</title></head>
+          <body>
+            <h1>Sup</h1>
+            <h2>DAmn Bro</h2>
+            <p>Look great</p>
+          </body>
+        </html>
+        `
+    )
+    res.end()
+})
+const PORT = 4000;
+server.listen(PORT, () => console.log(`Started server at port ${PORT}`))
