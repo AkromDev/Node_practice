@@ -3,12 +3,12 @@ const http = require('http')
 const server = http.createServer((req,res) => {
     const {url, method } = req;
     res.setHeader('Content-Type', 'text/html')
-    if(url === '/'){
+    if(url === '/form'){
         res.write(
             `<html>
               <head><title>Yo My Website</title></head>
               <body>
-              <form action="/message" type="POST">
+              <form action="/message" method="POST">
                 <input type="text" name="message">
                 <button type="submit">Submit Dude</button>
                </form>
@@ -40,6 +40,7 @@ const server = http.createServer((req,res) => {
             <h1>Sup</h1>
             <h2>DAmn Bro</h2>
             <p>Look great</p>
+            <a href="/form">Submit ur message</a>
           </body>
         </html>
         `
