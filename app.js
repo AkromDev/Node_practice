@@ -1,51 +1,38 @@
-const http = require('http')
+const http = require('http');
+const fs = require('fs');
 
-const server = http.createServer((req,res) => {
-    const {url, method } = req;
-    res.setHeader('Content-Type', 'text/html')
-    if(url === '/form'){
-        res.write(
-            `<html>
-              <head><title>Yo My Website</title></head>
-              <body>
-              <form action="/message" method="POST">
-                <input type="text" name="message">
-                <button type="submit">Submit Dude</button>
-               </form>
-              </body>
-            </html>
-            `
-        )
-        return res.end()
-    }
-    if(url === '/message' && method === 'POST'){
-        res.write(
-            `<html>
-              <head><title>Yo My Website</title></head>
-              <body>
-              <div>
-                 <h2>Submitted !!!</h2>
-                 <a href="/">Go Back Dude</a>
-              </div>
-              </body>
-            </html> 
-            `
-        )
-        return res.end()
-    }
-    res.write(
-        `<html>
-          <head><title>Yo My Website</title></head>
-          <body>
-            <h1>Sup</h1>
-            <h2>DAmn Bro</h2>
-            <p>Look great</p>
-            <a href="/form">Submit ur message</a>
-          </body>
-        </html>
-        `
-    )
-    res.end()
-})
+const server = http.createServer((req, res) => {
+  const url = req.url;
+  const method = req.method;
+  if (url === '/') {
+    res.write('<html>');
+    res.write('<head><title>Enter Message</title><head>');
+    res.write('<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Send</button></form></body>');
+    res.write('</html>');
+    return res.end();
+  }
+  if (url === '/message' && method === 'POST') {
+    const body = [];
+    req.on('data', (chunk) => {
+      console.log(chunk);
+      body.push(chunk);
+    });
+    req.on('end', () => {
+      const parsedBody = Buffer.concat(body).toString();
+      const message = parsedBody.split('=')[1];
+      console.log('parsedBody ',parsedBody)
+      fs.writeFileSync('message.txt', message);
+    });
+    res.statusCode = 302;
+    res.setHeader('Location', '/');
+    return res.end();
+  }
+  res.setHeader('Content-Type', 'text/html');
+  res.write('<html>');
+  res.write('<head><title>My First Page</title><head>');
+  res.write('<body><h1>Hello from my Node.js Server!</h1></body>');
+  res.write('</html>');
+  res.end();
+});
 const PORT = 4000;
-server.listen(PORT, () => console.log(`Started server at port ${PORT}`))
+server.listen(PORT, () => console.log(`Started server at port ${PORT}`));
