@@ -1,11 +1,11 @@
 const http = require('http')
 
-const server = http.createServer((req,res) => {
-    const {url, method } = req;
-    res.setHeader('Content-Type', 'text/html')
-    if(url === '/form'){
-        res.write(
-            `<html>
+const server = http.createServer((req, res) => {
+  const { url, method } = req;
+  res.setHeader('Content-Type', 'text/html')
+  if (url === '/form') {
+    res.write(
+      `<html>
               <head><title>Yo My Website</title></head>
               <body>
               <form action="/message" method="POST">
@@ -15,12 +15,12 @@ const server = http.createServer((req,res) => {
               </body>
             </html>
             `
-        )
-        return res.end()
-    }
-    if(url === '/message' && method === 'POST'){
-        res.write(
-            `<html>
+    )
+    return res.end()
+  }
+  if (url === '/message' && method === 'POST') {
+    res.write(
+      `<html>
               <head><title>Yo My Website</title></head>
               <body>
               <div>
@@ -30,11 +30,11 @@ const server = http.createServer((req,res) => {
               </body>
             </html> 
             `
-        )
-        return res.end()
-    }
-    res.write(
-        `<html>
+    )
+    return res.end()
+  }
+  res.write(
+    `<html>
           <head><title>Yo My Website</title></head>
           <body>
             <h1>Sup</h1>
@@ -44,8 +44,9 @@ const server = http.createServer((req,res) => {
           </body>
         </html>
         `
-    )
-    res.end()
+  )
+  res.end()
 })
+
 const PORT = 4000;
 server.listen(PORT, () => console.log(`Started server at port ${PORT}`))

@@ -1,0 +1,20 @@
+{
+  "name": "node_app",
+  "version": "1.0.0",
+  "description": "Just practice",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AkromDev/Node_practice.git"
+  },
+  "author": "Akrom",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AkromDev/Node_practice/issues"
+  },
+  "homepage": "https://github.com/AkromDev/Node_practice#readme"
+}
