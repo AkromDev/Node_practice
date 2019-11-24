@@ -38,5 +38,5 @@ app.use('/', (req, res) => {
 })
 
 const server = http.createServer(app)
-const PORT = 4000;
+const PORT = 3000;
 server.listen(PORT, () => console.log(`Started server at port ${PORT}`))
