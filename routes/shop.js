@@ -6,9 +6,7 @@ router.get(('/'),(req, res) => {
     res.send(
       `<h2>Sup my dude ? <h/2>
       <br/>
-      <a href="/form">Submit ur trash</a>
-      <br/>
-      <a href="/about">About page</a>
+      <a href="/admin/add-product">Add Product</a>
     `)
   })
 module.exports = router;

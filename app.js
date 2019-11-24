@@ -1,18 +1,14 @@
 const http = require("http")
 const express = require("express")
 const bodyParser = require('body-parser')
-const aboutRoute = require('./routes/about')
-const formRoute = require('./routes/form')
-const messageRoute = require('./routes/message')
-const homeRoute = require('./routes')
+const shopRoute = require('./routes/shop')
+const adminRoute = require('./routes/admin')
 
 const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use('/about', aboutRoute)
-app.use('/form', formRoute)
-app.use('/message', messageRoute)
-app.use(homeRoute)
+app.use('/admin', adminRoute)
+app.use(shopRoute)
 app.use((req,res) => {
   res.send('<h2>Page not found, dude</h2>')
 })
