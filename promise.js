@@ -1,24 +1,15 @@
+const timeout = 1500;
+
 console.log("Outside the promise");
 const fetchDataCallback = (num, callback, errorCallback) => {
-  if (num > 0) {
-    setTimeout(() => {
+  setTimeout(() => {
+    if (num > 0) {
       callback("Success");
-    }, 1000);
-  } else {
-    setTimeout(() => {
+    } else {
       errorCallback("Error");
-    }, 1000);
-  }
+    }
+  }, timeout);
 };
-fetchDataCallback(
-  4,
-  (res) => {
-    console.log("Callback success ", res);
-  },
-  (err) => {
-    console.log("Callback error ", err);
-  }
-);
 
 const fetchDataPromise = (num) => {
   const promise = new Promise((resolve, reject) => {
@@ -28,15 +19,48 @@ const fetchDataPromise = (num) => {
       } else {
         reject("Error");
       }
-    }, 1000);
+    }, timeout);
   });
   return promise;
 };
 
-fetchDataPromise(5)
-  .then((res) => {
-    console.log("Promise res ", res);
-  })
-  .catch((err) => {
-    console.log("Promise err ", err);
-  });
+const callbackExample = (num) => {
+  fetchDataCallback(
+    num,
+    (res) => {
+      console.log("Callback success", res);
+    },
+    (err) => {
+      console.log("Callback error", err);
+    }
+  );
+};
+
+const promiseExample = (num) => {
+  fetchDataPromise(num)
+    .then((res) => {
+      console.log("Promise res", res);
+      return res;
+    })
+    .catch((err) => {
+      console.log("Promise err", err);
+    });
+};
+
+const asyncExample = async (num) => {
+  console.log("Inside Async func");
+  let succ, error;
+  try {
+    const result = await fetchDataPromise(num);
+    succ = result;
+    console.log("Async res", result);
+  } catch (err) {
+    error = err;
+    console.log("Async err", err);
+  }
+  console.log("succ", succ);
+  console.log("error", error);
+  console.log("After Res");
+};
+
+asyncExample(5);
