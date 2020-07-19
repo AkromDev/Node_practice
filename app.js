@@ -2,10 +2,11 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 const errorController = require('./controllers/error');
 const app = express();
-
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
