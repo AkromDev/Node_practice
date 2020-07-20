@@ -7,28 +7,56 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
-
+const User = require('./models/user');
+const Product = require('./models/product');
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const PORT = 4000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use(errorController.get404);
 
+User.hasMany(Product, { constraints: true, onDelete: 'CASCADE' });
 sequelize
+  // .sync({ force: true }) //drops previos tables thus should be used like this in prod
   .sync()
-  .then(result => {
+  .then((result) => {
     // console.log(result);
-    app.listen(4000);
+    return User.findByPk(1);
   })
-  .catch(err => {
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Akrom', email: 'test@test.com' });
+    }
+    return user;
+  })
+  .then((user) => {
+    console.log('user ', user);
+    app.listen(PORT, () => {
+      console.log(`Server is listening to Port ${PORT}`);
+    });
+  })
+  .catch()
+  .catch()
+  .catch((err) => {
     console.log(err);
   });
