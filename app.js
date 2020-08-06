@@ -27,7 +27,7 @@ app.use((req, res, next) => {
   User.findByPk(1)
     .then((user) => {
       console.log('user ', user)
-      req.body.user = user
+      req.user = user
       next()
     })
     .catch((err) => {
@@ -45,6 +45,7 @@ Cart.belongsTo(User)
 Cart.belongsToMany(Product, { through: CartItem })
 Product.belongsToMany(Cart, { through: CartItem })
 
+let userExists = true
 sequelize
   // .sync({ force: true }) // drops previos tables thus should be used like this in prod
   .sync()
@@ -54,18 +55,22 @@ sequelize
   })
   .then((user) => {
     if (!user) {
+      userExists = false
       return User.create({ name: 'Akrom', email: 'test@test.com' })
     }
     return user
   })
   .then((user) => {
-    console.log('user ', user)
+    if (!userExists) {
+      return user.createCart()
+    }
+    return user
+  })
+  .then(() => {
     app.listen(PORT, () => {
       console.log(`Server is listening to Port ${PORT}`)
     })
   })
-  .catch()
-  .catch()
   .catch((err) => {
     console.log(err)
   })

@@ -9,6 +9,7 @@
     "ecmaVersion": 11
   },
   "rules": {
-    "no-undef": "error"
+    "no-undef": "error",
+    "prefer-const": 0
   }
 }
