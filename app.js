@@ -2,80 +2,36 @@ const path = require('path')
 
 const express = require('express')
 const bodyParser = require('body-parser')
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
+
 const errorController = require('./controllers/error')
-const sequelize = require('./util/database')
+const mongoConnect = require('./util/database').mongoConnect
 const User = require('./models/user')
-const Product = require('./models/product')
+
 const app = express()
+
 app.set('view engine', 'ejs')
 app.set('views', 'views')
 
 const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
-const Cart = require('./models/cart')
-const CartItem = require('./models/cart-item')
-const Order = require('./models/order')
-const OrderItem = require('./models/order-item')
-
-const PORT = 4000
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use((req, res, next) => {
-  User.findByPk(1)
-    .then((user) => {
-      console.log('user ', user)
-      req.user = user
+  User.findById('5f2e78534dbd5a480ed09eb5')
+    .then(user => {
+      req.user = new User(user.name, user.email, user.cart || {items:[]}, user._id)
       next()
     })
-    .catch((err) => {
-      console.log(err)
-    })
+    .catch(err => console.log(err))
 })
+
 app.use('/admin', adminRoutes)
 app.use(shopRoutes)
 
 app.use(errorController.get404)
 
-User.hasMany(Product, { constraints: true, onDelete: 'CASCADE' })
-User.hasOne(Cart)
-Cart.belongsTo(User)
-Cart.belongsToMany(Product, { through: CartItem })
-Product.belongsToMany(Cart, { through: CartItem })
-Order.belongsTo(User)
-User.hasMany(Order)
-Order.belongsToMany(Product, { through: OrderItem })
-
-let userExists = true
-sequelize
-  // .sync({ force: true }) // drops previos tables thus should be used like this in prod
-  .sync()
-  .then((result) => {
-    // console.log(result);
-    return User.findByPk(1)
-  })
-  .then((user) => {
-    if (!user) {
-      userExists = false
-      return User.create({ name: 'Akrom', email: 'test@test.com' })
-    }
-    return user
-  })
-  .then((user) => {
-    if (!userExists) {
-      return user.createCart()
-    }
-    return user
-  })
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is listening to Port ${PORT}`)
-    })
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+mongoConnect(() => {
+  app.listen(4000)
+})
