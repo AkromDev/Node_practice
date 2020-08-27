@@ -107,7 +107,6 @@ exports.updatePost = async (req, res, next) => {
   }
   try {
     const post = await Post.findById(postId);
-
     if (!post) {
       const error = new Error('Could not find post.');
       error.statusCode = 404;
@@ -138,6 +137,7 @@ exports.deletePost = async (req, res, next) => {
   const postId = req.params.postId;
   try {
     const post = await Post.findById(postId);
+
     if (!post) {
       const error = new Error('Could not find post.');
       error.statusCode = 404;
@@ -151,9 +151,11 @@ exports.deletePost = async (req, res, next) => {
     // Check logged in user
     clearImage(post.imageUrl);
     await Post.findByIdAndRemove(postId);
+
     const user = await User.findById(req.userId);
     user.posts.pull(postId);
     await user.save();
+
     res.status(200).json({ message: 'Deleted post.' });
   } catch (err) {
     if (!err.statusCode) {
