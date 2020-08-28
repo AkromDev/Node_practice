@@ -72,7 +72,11 @@ mongoose
     useUnifiedTopology: true
   })
   .then(result => {
-    app.listen(PORT);
+    const server = app.listen(PORT);
+    const io = require('./socket').init(server);
+    io.on('connection', socket => {
+      console.log('Client connected');
+    });
     console.log('Connected to MongoDB')
     console.log(`Listening at port ${PORT}`)
   })

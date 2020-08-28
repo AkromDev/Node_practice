@@ -17,10 +17,11 @@ exports.signup = async (req, res, next) => {
   const password = req.body.password;
   try {
     const hashedPw = await bcrypt.hash(password, 12);
+
     const user = new User({
       email: email,
       password: hashedPw,
-      name: name,
+      name: name
     });
     const result = await user.save();
     res.status(201).json({ message: 'User created!', userId: result._id });
@@ -35,6 +36,7 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  let loadedUser;
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
@@ -42,6 +44,7 @@ exports.login = async (req, res, next) => {
       error.statusCode = 401;
       throw error;
     }
+    loadedUser = user;
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
       const error = new Error('Wrong password!');
@@ -50,13 +53,13 @@ exports.login = async (req, res, next) => {
     }
     const token = jwt.sign(
       {
-        email: user.email,
-        userId: user._id.toString(),
+        email: loadedUser.email,
+        userId: loadedUser._id.toString()
       },
       'somesupersecretsecret',
       { expiresIn: '1h' }
     );
-    res.status(200).json({ token: token, userId: user._id.toString() });
+    res.status(200).json({ token: token, userId: loadedUser._id.toString() });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
