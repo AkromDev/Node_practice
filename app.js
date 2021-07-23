@@ -11,7 +11,7 @@ const multer = require('multer');
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
-
+const checkPath = require('./util/checkPath')
 const MONGODB_URI =
   'mongodb+srv://akrom:akrom@cluster0.3sj7k.mongodb.net/shop?retryWrites=true&w=majority';
 
@@ -23,7 +23,8 @@ const store = new MongoDBStore({
 const csrfProtection = csrf();
 
 const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: async (req, file, cb) => {
+    await checkPath('images')
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
@@ -59,7 +60,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(
   session({
     secret: 'my secret',
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     store: store
   })
@@ -101,11 +102,12 @@ app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
   // res.status(error.httpStatusCode).render(...);
+  console.log('error >> ', error)
   // res.redirect('/500');
   res.status(500).render('500', {
     pageTitle: 'Error!',
     path: '/500',
-    isAuthenticated: req.session.isLoggedIn
+    isAuthenticated: req.session && req.session.isLoggedIn || false
   });
 });
 
